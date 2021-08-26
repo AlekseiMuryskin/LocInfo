@@ -1,7 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, url_for, flash, redirect
 import pyodbc
 
 app=Flask(__name__)
+app.config['SECRET_KEY']='pts'
 
 @app.route('/')
 def index():
@@ -42,14 +43,61 @@ def station():
 
 @app.route('/create_obj',methods=('GET','POST'))
 def createObj():
+    if request.method == 'POST':
+        code = request.form['code']
+        desc = request.form['desc']
+        corn = request.form['corn']
+        xc = request.form['xc']
+        yc = request.form['yc']
+        coord = request.form['coord']
+
+        if not code:
+            flash('Code is required!')
+        else:
+            conn = get_db_connect()
+            conn.execute('INSERT INTO object (code, description, corners,xc,yc,coord_system) VALUES (?, ?, ?, ?, ?, ?)',
+                         (code, desc,corn,float(xc),float(yc),coord))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('index'))
     return render_template('create_obj.html')
 
 @app.route('/edit_obj',methods=('GET','POST'))
 def editObj():
-    return render_template('edit_obj.html')
+    cursor = get_db_connect()
+    obj = cursor.execute("SELECT code FROM object").fetchall()
+    cursor.close()
+    if request.method == 'POST':
+        code = request.form['code']
+        cursor = get_db_connect()
+        obj_info = cursor.execute("SELECT description,corners,xc,yc,coord_system FROM object WHERE code=VALUES(?)",
+                                  (code)).fetchall()
+        cursor.close()
+        return redirect('edit_obj_all')
+    return render_template('edit_obj.html',posts=obj)
+
+@app.route('/edit_obj_all',methods=('GET','POST'))
+def editObjAll():
+    if request.method == 'POST':
+        code = request.form['code']
+        cursor = get_db_connect()
+        obj_info = cursor.execute("SELECT description,corners,xc,yc,coord_system FROM object WHERE code=VALUES(?)",(code)).fetchall()
+        cursor.close()
+        return obj_info
+    return render_template('edit_obj_all.html')
 
 @app.route('/delete_obj',methods=('GET','POST'))
 def deleteObj():
+    if request.method == 'POST':
+        code = request.form['code']
+        if not code:
+            flash('Code is requiered')
+        else:
+            conn=get_db_connect()
+            conn.execute('DELETE FROM object WHERE code=VALUES(?)',(code))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('index'))
     return render_template('delete_obj.html')
 
 def get_db_connect():

@@ -1,45 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{% block title %} Create a New Obj {% endblock %}</h1>
+<h1>{% block title %} Edit an Obj {% endblock %}</h1>
 
 <form method="post">
-    <div class="form-group">
+    <div class="form-group2">
         <label for="code">Code</label>
-        <input type="text" name="code"
+        <select  name="code"
                placeholder="Object code" class="form-control"
-               value="{{ request.form['code'] }}"></input>
+               value="{{ request.form['code'] }}">
+    {% for post in posts %}
+    <option>{{ post[0] }}</option>
+    {% endfor %}
+    </select>
     </div>
 
+    <div class="form-group2">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+<form method="post">
     <div class="form-group">
-        <label for="desc">Describtion</label>
-        <textarea name="desc" placeholder="Description"
+        <label for="description">Describtion</label>
+        <textarea name="description" placeholder="Description"
                   class="form-control">{{ request.form['desc'] }}</textarea>
     </div>
 
     <div class="form-group">
-        <label for="corn">Corners</label>
-        <textarea name="corn" placeholder="Corners Num Point;X1;Y1;X2..."
+        <label for="corners">Corners</label>
+        <textarea name="corners" placeholder="Corners Num Point;X1;Y1;X2..."
                   class="form-control">{{ request.form['corn'] }}</textarea>
     </div>
 
     <div class="form-group">
-        <label for="xc">Xc</label>
-        <input type="text" name="xc"
+        <label for="Xc">Xc</label>
+        <input type="text" name="Xc"
                placeholder="Xc" class="form-control"
                value="{{ request.form['xc'] }}"></input>
     </div>
 
     <div class="form-group">
-        <label for="yc">Yc</label>
-        <input type="text" name="yc"
+        <label for="Yc">Yc</label>
+        <input type="text" name="Yc"
                placeholder="Yc" class="form-control"
                value="{{ request.form['yc'] }}"></input>
     </div>
 
     <div class="form-group">
-        <label for="coord">Coord System</label>
-        <input type="text" name="coord"
+        <label for="Coord system">Coord System</label>
+        <input type="text" name="Coord system"
                placeholder="WSG (default)" class="form-control"
                value="{{ request.form['coord'] }}"></input>
     </div>

@@ -6,43 +6,15 @@
 <form method="post">
     <div class="form-group">
         <label for="code">Code</label>
-        <input type="text" name="code"
+        <select  name="code"
                placeholder="Object code" class="form-control"
-               value="{{ request.form['code'] }}"></input>
+               value="{{ request.form['code'] }}">
+    {% for post in posts %}
+    <option>{{ post[0] }}</option>
+    {% endfor %}
+    </select>
     </div>
 
-    <div class="form-group">
-        <label for="description">Describtion</label>
-        <textarea name="description" placeholder="Description"
-                  class="form-control">{{ request.form['desc'] }}</textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="corners">Corners</label>
-        <textarea name="corners" placeholder="Corners Num Point;X1;Y1;X2..."
-                  class="form-control">{{ request.form['corn'] }}</textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="Xc">Xc</label>
-        <input type="text" name="Xc"
-               placeholder="Xc" class="form-control"
-               value="{{ request.form['xc'] }}"></input>
-    </div>
-
-    <div class="form-group">
-        <label for="Yc">Yc</label>
-        <input type="text" name="Yc"
-               placeholder="Yc" class="form-control"
-               value="{{ request.form['yc'] }}"></input>
-    </div>
-
-    <div class="form-group">
-        <label for="Coord system">Coord System</label>
-        <input type="text" name="Coord system"
-               placeholder="WSG (default)" class="form-control"
-               value="{{ request.form['coord'] }}"></input>
-    </div>
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Submit</button>
     </div>
