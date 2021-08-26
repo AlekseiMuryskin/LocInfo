@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Event List {% endblock %}</h1>
+    <table width=100% >
+        <tr>
+            <th> ID </th><th> obj_code </th>
+            <th> Source type </th> <th> automatic </th>
+            <th> status_id </th> <th> creator </th>
+            <th> comment </th> 
+        </tr>
+    {% for post in posts %}
+        <tr>
+            <td> {{ post[0] }} </td><td> {{ post[2] }} </td>
+            <td> {{ post[4] }} </td><td> {{ post[5] }} </td>
+            <td> {{ post[6] }} </td><td> {{ post[7] }} </td>
+            <td> {{ post[8] }} </td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

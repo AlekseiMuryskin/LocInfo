@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Station List {% endblock %}</h1>
+    <table width=100% >
+        <tr>
+            <th> Sta </th><th> Ch </th>
+            <th> Loc </th><th> X </th>
+            <th> Y </th><th> Z </th>
+            <th> Start </th><th> End </th>
+            <th> Sensitivity </th><th> Sens freq </th>
+            <th> Norm coeff </th> 
+        </tr>
+    {% for post in posts %}
+        <tr>
+            <td> {{ post[1] }} </td><td> {{ post[2] }} </td>
+            <td> {{ post[3] }} </td><td> {{ post[4] }} </td>
+            <td> {{ post[5] }} </td><td> {{ post[6] }} </td>
+            <td> {{ post[9] }} </td><td> {{ post[10] }} </td>
+            <td> {{ post[11] }} </td><td> {{ post[12] }} </td>
+            <td> {{ post[15] }} </td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

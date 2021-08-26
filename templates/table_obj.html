@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Object List {% endblock %}</h1>
+    <table width=100% >
+        <tr>
+            <th> code </th><th> description </th>
+            <th> corners </th> <th> Xc </th>
+             <th> Yc </th> <th> Coord System </th>
+        </tr>
+    {% for post in posts %}
+        <tr>
+            <td>{{ post[0] }}</td><td>{{ post[1] }}</td>
+            <td>{{ post[2] }}</td><td>{{ post[3] }} </td>
+            <td>{{ post[4] }}</td><td>{{ post[5] }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" onclick="window.location.href = '/create_obj';">Create</button>
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" onclick="window.location.href = '/edit_obj';">Edit</button>
+    </div>
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" onclick="window.location.href = '/delete_obj';">Delete</button>
+    </div>
+
+{% endblock %}
