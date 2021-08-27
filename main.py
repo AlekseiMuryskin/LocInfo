@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, url_for, flash, redirect
 import pyodbc
 
 app=Flask(__name__)
-app.config['SECRET_KEY']='pts'
+app.run(debug=True)
 
 @app.route('/')
 def index():
@@ -60,7 +60,27 @@ def createObj():
             conn.commit()
             conn.close()
             return redirect(url_for('index'))
-    return render_template('create_obj.html')
+    return render_template('create_obj.html', code=code)
+
+
+@app.route('/edit_obj_all/<code>',methods=('GET','POST'))
+def edit_obj_all(code):
+    cursor = get_db_connect()
+    obj = cursor.execute(f"SELECT * FROM object WHERE code = '{code}'").fetchall()
+    cursor.close()
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        desc=data['description']
+        corn=data['corners']
+        xc=data['Xc']
+        yc=data['Yc']
+        coo=data['Coord system']
+        cursor = get_db_connect()
+        cursor.execute(f"UPDATE object SET description = '{desc}',corners = '{corn}',xc = {float(xc)}, yc = {float(yc)}, coord_system = '{coo}' WHERE code = '{code}'")
+        cursor.commit()
+        cursor.close()
+        return redirect(url_for('index'))
+    return render_template('edit_obj_all.html',posts=obj[0])
 
 @app.route('/edit_obj',methods=('GET','POST'))
 def editObj():
@@ -70,35 +90,30 @@ def editObj():
     if request.method == 'POST':
         code = request.form['code']
         cursor = get_db_connect()
-        obj_info = cursor.execute("SELECT description,corners,xc,yc,coord_system FROM object WHERE code=VALUES(?)",
-                                  (code)).fetchall()
+        obj_info = cursor.execute(f"SELECT * FROM object WHERE code = '{code}'").fetchall()
         cursor.close()
-        return redirect('edit_obj_all')
+        redirect(url_for('index'))
+        return redirect(url_for('edit_obj_all',code=code))
     return render_template('edit_obj.html',posts=obj)
-
-@app.route('/edit_obj_all',methods=('GET','POST'))
-def editObjAll():
-    if request.method == 'POST':
-        code = request.form['code']
-        cursor = get_db_connect()
-        obj_info = cursor.execute("SELECT description,corners,xc,yc,coord_system FROM object WHERE code=VALUES(?)",(code)).fetchall()
-        cursor.close()
-        return obj_info
-    return render_template('edit_obj_all.html')
 
 @app.route('/delete_obj',methods=('GET','POST'))
 def deleteObj():
+    cursor = get_db_connect()
+    obj = cursor.execute("SELECT code FROM object").fetchall()
+    cursor.close()
+    names=",".join([i[0] for i in obj])
     if request.method == 'POST':
         code = request.form['code']
         if not code:
             flash('Code is requiered')
         else:
             conn=get_db_connect()
-            conn.execute('DELETE FROM object WHERE code=VALUES(?)',(code))
+            conn.execute(f"DELETE FROM object WHERE code='{code}'")
             conn.commit()
             conn.close()
             return redirect(url_for('index'))
-    return render_template('delete_obj.html')
+    return render_template('delete_obj.html',names=names)
+
 
 def get_db_connect():
     db = 'D:\git\FlaskStep\loc_db_v3.accdb'
@@ -111,3 +126,5 @@ def get_db_connect():
         print("Error in Connection", e)
     cursor = conn.cursor()
     return cursor
+
+

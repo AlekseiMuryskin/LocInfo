@@ -4,6 +4,9 @@
 <h1>{% block title %} Delete an Obj {% endblock %}</h1>
 
 <form method="post">
+    <div>
+        <label>Object list: {{ names }}</label>
+    </div>
     <div class="form-group">
         <label for="code">Code</label>
         <input type="text" name="code"
