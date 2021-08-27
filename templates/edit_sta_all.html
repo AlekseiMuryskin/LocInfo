@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% block title %} Edit an Obj {% endblock %}</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label for="Nrt">Net</label>
+        <input type="text" name="Net"
+               placeholder="Net" class="form-control"
+               value="{{ posts[1] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="description">Describtion</label>
+        <textarea name="description" placeholder="Description"
+                  class="form-control">{{ posts[2] }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Coord system">Coord System</label>
+        <input type="text" name="Coord system"
+               placeholder="WSG (default)" class="form-control"
+               value="{{ posts[3] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="start">Start</label>
+        <input type="text" name="start"
+               placeholder="Start" class="form-control"
+               value="{{ posts[4] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="end">End</label>
+        <input type="text" name="end"
+               placeholder="end" class="form-control"
+               value="{{ posts[5] }}"></input>
+    </div>
+
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+{% endblock %}

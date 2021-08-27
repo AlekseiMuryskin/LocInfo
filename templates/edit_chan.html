@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% block title %} Edit an Station {% endblock %}</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label for="code">Station Code</label>
+        <select  name="code"
+               placeholder="Station code" class="form-control"
+               value="{{ request.form['code'] }}">
+    {% for post in posts %}
+    <option>{{ post[0] }}</option>
+    {% endfor %}
+    </select>
+    </div>
+
+    <div class="form-group">
+       <label for="loc">LocID</label>
+       <input type="text" name=loc
+              placeholder="LocID" class="form-control"
+              value="{{ request.form['loc'] }}"></input>
+       
+    </div>
+
+    <div class="form-group">
+       <label for="chan">Channel</label>
+       <input type="text" name=chan
+              placeholder="Cnahhel" class="form-control"
+              value="{{ request.form['chan'] }}"></input>
+
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" >Submit</button>
+    </div>
+</form>
+{% endblock %}

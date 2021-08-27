@@ -115,6 +115,83 @@ def deleteObj():
     return render_template('delete_obj.html',names=names)
 
 
+@app.route('/edit_sta',methods=('GET','POST'))
+def editSta():
+    cursor = get_db_connect()
+    obj = cursor.execute("SELECT code FROM station").fetchall()
+    cursor.close()
+    if request.method == 'POST':
+        code = request.form['code']
+        cursor = get_db_connect()
+        obj_info = cursor.execute(f"SELECT * FROM station WHERE code = '{code}'").fetchall()
+        cursor.close()
+        redirect(url_for('index'))
+        return redirect(url_for('edit_sta_all',code=code))
+    return render_template('edit_sta.html',posts=obj)
+
+@app.route('/edit_sta_all/<code>',methods=('GET','POST'))
+def edit_sta_all(code):
+    cursor = get_db_connect()
+    obj = cursor.execute(f"SELECT * FROM station WHERE code = '{code}'").fetchall()
+    cursor.close()
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        desc=data['description']
+        net=data['Net']
+        coo=data['Coord system']
+        start=data['start']
+        end=data['end']
+        cursor = get_db_connect()
+        cursor.execute("UPDATE station SET description = '%s', net = '%s', coord_system = '%s' WHERE code = '%s'" % (desc,net,coo,code))
+        cursor.commit()
+        cursor.close()
+        return redirect(url_for('index'))
+    return render_template('edit_sta_all.html',posts=obj[0])
+
+@app.route('/edit_chan',methods=('GET','POST'))
+def channel_edit():
+    cursor = get_db_connect()
+    obj = cursor.execute("SELECT code FROM station").fetchall()
+    cursor.close()
+    if request.method == 'POST':
+        code = request.form['code']
+        locid=request.form['loc']
+        channel=request.form['chan']
+        cursor = get_db_connect()
+        obj_info = cursor.execute(f"SELECT * FROM station WHERE code = '{code}'").fetchall()
+        cursor.close()
+        redirect(url_for('index'))
+        return redirect(url_for('edit_chan_all', code=code,locid=locid,channel=channel))
+    return render_template('edit_chan.html',posts=obj)
+
+@app.route('/edit_chan_all/<code>/<locid>/<channel>',methods=('GET','POST'))
+def edit_chan_all(code,locid,channel):
+    cursor = get_db_connect()
+    obj = cursor.execute(f"SELECT * FROM channel WHERE (sta_code = '{code}') AND (lc = '{locid}') AND  (code = '{channel}')").fetchall()
+    cursor.close()
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        sta=data['sta']
+        new_code=data['code']
+        dip=data['dip']
+        freq=data['freq']
+        loc=data['loc']
+        norm=data['norm']
+        sens=data['sens']
+        x=data['x']
+        y=data['y']
+        z=data['z']
+        poles=data['poles']
+        zeros=data['zeros']
+        az=data['az']
+        cursor = get_db_connect()
+        cursor.execute("UPDATE channel SET sta_code=%s,code=%s,lc=%s,X=%s,Y=%s,Z=%s,azimuth=%s,dip=%s,sensitivity=%s,sensitivity_freq=%s,poles=%s,zeros=%s,norm_coeddicient=%s  WHERE sta_code = '%s' AND lc = '%s' AND code = '%s'" % (sta,new_code,loc,x,y,z,az,dip,sens,freq,poles,zeros,norm,code,locid,channel))
+        cursor.commit()
+        cursor.close()
+        return redirect(url_for('index'))
+    return render_template('edit_chan_all.html',posts=obj[0])
+
+
 def get_db_connect():
     db = 'D:\git\FlaskStep\loc_db_v3.accdb'
     try:

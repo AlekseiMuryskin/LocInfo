@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{% block title %} Edit an Chanell {% endblock %}</h1>
+
+<form method="post">
+
+    <div class="form-group">
+        <label for="sta">Station code</label>
+        <input type="text" name="sta"
+               placeholder="Station code" class="form-control"
+               value="{{ posts[1] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="code">Code</label>
+        <input type="text" name="code"
+               placeholder="Code" class="form-control"
+               value="{{ posts[2] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="loc">LocID</label>
+        <input type="text" name="loc"
+               placeholder="LocID" class="form-control"
+               value="{{ posts[3] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="x">X</label>
+        <input type="text" name="x"
+               placeholder="X" class="form-control"
+               value="{{ posts[4] }}"></input>
+    </div>
+    
+    <div class="form-group">
+        <label for="y">Y</label>
+        <input type="text" name="y"
+               placeholder="Y" class="form-control"
+               value="{{ posts[5] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="z">Z</label>
+        <input type="text" name="z"
+               placeholder="Z" class="form-control"
+               value="{{ posts[6] }}"></input>
+    </div>
+    
+    <div class="form-group">
+        <label for="az">Azimuth</label>
+        <input type="text" name="az"
+               placeholder="Azimuth" class="form-control"
+               value="{{ posts[7] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="dip">Dip</label>
+        <input type="text" name="dip"
+               placeholder="dip" class="form-control"
+               value="{{ posts[8] }}"></input>
+    </div>
+ 
+    <div class="form-group">
+        <label for="sens">Sensitivity</label>
+        <input type="text" name="sens"
+               placeholder="Sensitivity" class="form-control"
+               value="{{ posts[11] }}"></input>
+    </div>
+   
+    <div class="form-group">
+        <label for="freq">Sensitivity freq</label>
+        <input type="text" name="freq"
+               placeholder="Sensitivity freq" class="form-control"
+               value="{{ posts[12] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="poles">Poles</label>
+        <textarea name="poles" placeholder="Poles Num Point;X1;X2;X3..."
+                  class="form-control">{{ posts[13] }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="zeros">Zeros</label>
+        <textarea name="zeros" placeholder="Zeros Num Point;X1;X2;X3..."
+                  class="form-control">{{ posts[14] }}</textarea>
+    </div>
+
+   <div class="form-group">
+        <label for="norm">Morm coefficient</label>
+        <input type="text" name="norm"
+               placeholder="Norm coefficient" class="form-control"
+               value="{{ posts[15] }}"></input>
+    </div>
+
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+</form>
+{% endblock %}
