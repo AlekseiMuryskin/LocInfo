@@ -185,7 +185,10 @@ def edit_chan_all(code,locid,channel):
         zeros=data['zeros']
         az=data['az']
         cursor = get_db_connect()
-        cursor.execute("UPDATE channel SET sta_code=%s,code=%s,lc=%s,X=%s,Y=%s,Z=%s,azimuth=%s,dip=%s,sensitivity=%s,sensitivity_freq=%s,poles=%s,zeros=%s,norm_coeddicient=%s  WHERE sta_code = '%s' AND lc = '%s' AND code = '%s'" % (sta,new_code,loc,x,y,z,az,dip,sens,freq,poles,zeros,norm,code,locid,channel))
+        cursor.execute("UPDATE channel SET sta_code='%s',code='%s',lc='%s',X='%s',Y='%s',Z='%s',azimuth='%s',dip='%s',sensitivity='%s',sensitivity_freq='%s',poles='%s',zeros='%s',norm_coefficient='%s'  WHERE sta_code = '%s' AND lc = '%s' AND code = '%s'" % (sta,new_code,loc,x,y,z,az,dip,sens,freq,poles,zeros,norm,code,locid,channel))
+        #cursor.execute(
+        #    "UPDATE channel SET sta_code='%s',code='%s',lc='%s',X='%s',Y='%s',Z='%s',azimuth='%s',dip='%s',sensitivity='%s',sensitivity_freq='%s'  WHERE sta_code = '%s' AND lc = '%s' AND code = '%s'" % (
+        #    sta, new_code, loc, x, y, z, az, dip, sens, freq, code, locid, channel))
         cursor.commit()
         cursor.close()
         return redirect(url_for('index'))
