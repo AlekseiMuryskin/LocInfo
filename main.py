@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, url_for, flash, redirect
+from waitress import serve
 import pyodbc
 
 app=Flask(__name__)
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run()
 
 @app.route('/')
 def index():
@@ -206,5 +208,8 @@ def get_db_connect():
         print("Error in Connection", e)
     cursor = conn.cursor()
     return cursor
+
+
+
 
 
