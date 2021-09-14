@@ -1,10 +1,17 @@
 from flask import Flask, render_template, request, url_for, flash, redirect
 from waitress import serve
+from wtforms import SelectField
+from flask_wtf import FlaskForm
 import pyodbc
 
 app=Flask(__name__)
 if __name__ == '__main__':
     app.run()
+
+
+class Form(FlaskForm):
+    loc=SelectField('LocID',choices=[])
+    chan = SelectField('Channel', choices=[])
 
 @app.route('/')
 def index():
@@ -33,14 +40,12 @@ def event():
 @app.route('/station')
 def station():
     cursor = get_db_connect()
-    obj = cursor.execute("SELECT * FROM channel").fetchall()
+    obj = cursor.execute("SELECT DISTINCT sta_code,X,Y,Z FROM channel").fetchall()
     cursor.close()
     for i in obj:
-        i[4]=f'{i[4]:.2f}'
-        i[5] = f'{i[5]:.2f}'
-        i[6] = f'{i[6]:.2f}'
-        i[11] = f'{i[11]:.2e}'
-        i[15] = f'{i[15]:.2e}'
+        i[1]=f'{i[1]:.2f}'
+        i[2] = f'{i[2]:.2f}'
+        i[3] = f'{i[3]:.2f}'
     return render_template('table_sta.html', posts=obj)
 
 @app.route('/create_obj',methods=('GET','POST'))
@@ -198,7 +203,8 @@ def edit_chan_all(code,locid,channel):
 
 
 def get_db_connect():
-    db = 'D:\git\FlaskStep\loc_db_v3.accdb'
+    #db = 'D:\git\FlaskStep\loc_db_v3.accdb'
+    db = 'E:\git\LocInfo\loc_db_v3.accdb'
     try:
         con_str = f'DBQ={db};'
         con_string = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};' + con_str
