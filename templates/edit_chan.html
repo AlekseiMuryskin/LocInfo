@@ -14,21 +14,30 @@
     {% endfor %}
     </select>
     </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" >Select Station</button>
+    </div> 
 
     <div class="form-group">
-       <label for="loc">LocID</label>
-       <input type="text" name=loc
-              placeholder="LocID" class="form-control"
-              value="{{ request.form['loc'] }}"></input>
-       
+        <label for="loc">LocID</label>
+        <select  name="loc"
+               placeholder="LocID" class="form-control"
+               value="{{ request.form['loc'] }}">
+    {% for loc in lc %}
+    <option>{{ loc }}</option>
+    {% endfor %}
+    </select>
     </div>
 
-    <div class="form-group">
-       <label for="chan">Channel</label>
-       <input type="text" name=chan
-              placeholder="Channel" class="form-control"
-              value="{{ request.form['chan'] }}"></input>
-
+   <div class="form-group">
+        <label for="chan">Channel</label>
+        <select  name="chan"
+               placeholder="Channel" class="form-control"
+               value="{{ request.form['chan'] }}">
+    {% for chan in ch %}
+    <option>{{ chan }}</option>
+    {% endfor %}
+    </select>
     </div>
 
     <div class="form-group">

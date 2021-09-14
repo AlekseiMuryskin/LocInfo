@@ -9,10 +9,6 @@ if __name__ == '__main__':
     app.run()
 
 
-class Form(FlaskForm):
-    loc=SelectField('LocID',choices=[])
-    chan = SelectField('Channel', choices=[])
-
 @app.route('/')
 def index():
     cursor=get_db_connect()
@@ -160,16 +156,30 @@ def channel_edit():
     cursor = get_db_connect()
     obj = cursor.execute("SELECT code FROM station").fetchall()
     cursor.close()
+    lc=[]
+    ch=[]
     if request.method == 'POST':
         code = request.form['code']
-        locid=request.form['loc']
-        channel=request.form['chan']
-        cursor = get_db_connect()
-        obj_info = cursor.execute(f"SELECT * FROM station WHERE code = '{code}'").fetchall()
-        cursor.close()
-        redirect(url_for('index'))
-        return redirect(url_for('edit_chan_all', code=code,locid=locid,channel=channel))
-    return render_template('edit_chan.html',posts=obj)
+        try:
+            locid=request.form['loc']
+            channel = request.form['chan']
+            redirect(url_for('index'))
+            return redirect(url_for('edit_chan_all', code=code, locid=locid, channel=channel))
+        except:
+            cursor = get_db_connect()
+            obj_info = cursor.execute(f"SELECT code,lc FROM channel WHERE sta_code = '{code}'").fetchall()
+            cursor.close()
+            for i in obj_info:
+                ch.append(i[0])
+                lc.append(i[1])
+            lc=list(set(lc))
+            return render_template('edit_chan.html', posts=obj, lc=lc, ch=ch)
+
+        #locid=request.form['loc']
+        #channel=request.form['chan']
+        #redirect(url_for('index'))
+        #return redirect(url_for('edit_chan_all', code=code,locid=locid,channel=channel))
+    return render_template('edit_chan.html',posts=obj,lc=lc,ch=ch)
 
 @app.route('/edit_chan_all/<code>/<locid>/<channel>',methods=('GET','POST'))
 def edit_chan_all(code,locid,channel):
