@@ -30,6 +30,17 @@ def object():
 def event():
     cursor = get_db_connect()
     obj = cursor.execute("SELECT * FROM event").fetchall()
+    status = cursor.execute("SELECT * FROM status").fetchall()
+    stat={}
+    for i in status:
+        stat[str(i[0])]=i[1]
+    source = cursor.execute("SELECT * FROM source_type").fetchall()
+    stype={}
+    for i in source:
+        stype[str(i[0])]=i[1]
+    for i in obj:
+        i[6]=stat[str(i[6])]
+        i[4]=stype[str(i[4])]
     cursor.close()
     return render_template('table_evt.html', posts=obj)
 
