@@ -2,6 +2,81 @@
 
 {% block content %}
     <h1>{% block title %} Event List {% endblock %}</h1>
+
+<form method="post">
+    <div class="form-group">
+        <label for="code">Object Code</label>
+        <select  name="code"
+               placeholder="Object code" class="form-control"
+               value="{{ request.form['code'] }}">
+    <option></option>
+    {% for code in obj %}
+    <option>{{ code[0] }}</option>
+    {% endfor %}
+    </select>
+    </div>
+
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select  name="status"
+               placeholder="status" class="form-control"
+               value="{{ request.form['status'] }}">
+    <option></option>
+    {% for stat in status %}
+    <option>{{ stat[1] }}</option>
+    {% endfor %}
+    </select>
+    </div>
+
+    <div class="form-group">
+        <label for="source">Source type</label>
+        <select  name="source"
+               placeholder="source" class="form-control"
+               value="{{ request.form['source'] }}">
+    <option></option>
+    {% for source in sources %}
+    <option>{{ source[1] }}</option>
+    {% endfor %}
+    </select>
+    </div>
+
+    <div class="form-group">
+        <label for="auto">Auto/manual</label>
+        <select  name="auto"
+               class="form-control"
+               value="{{ request.form['auto'] }}">
+    <option></option>
+    <option>Auto</option>
+    <option>Manual</option>
+    </select>
+    </div>
+
+    <div class="form-group">
+        <label for="start">Start date</label>
+        <input type="date" name="start" id="start" class="form-control" value="{{ request.form['start'] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="end">End date</label>
+        <input type="date" name="end" id="end" class="form-control" value="{{ request.form['end'] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <label for="limit">Limit</label>
+        <input type="text" name="limit"
+               placeholder="Limit" class="form-control"
+               value="{{ request.form['limit'] }}"></input>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary" >Select</button>
+    </div> 
+</form>
+
+    <div class="form-group">
+        <p>{{ filter }}</p>
+    </div>
+
     <table width=100% >
         <tr>
             <th> ID </th><th> obj_code </th>

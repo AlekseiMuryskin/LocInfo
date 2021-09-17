@@ -1,12 +1,10 @@
 from flask import Flask, render_template, request, url_for, flash, redirect
-from waitress import serve
-from wtforms import SelectField
-from flask_wtf import FlaskForm
 import pyodbc
+from obspy import UTCDateTime
 
 app=Flask(__name__)
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
 
 
 @app.route('/')
@@ -26,23 +24,65 @@ def object():
         i[4]=f'{i[4]:.2f}'
     return render_template('table_obj.html', posts=obj)
 
-@app.route('/evt')
+@app.route('/evt',methods=('GET','POST'))
 def event():
+    active_filter=''
     cursor = get_db_connect()
     obj = cursor.execute("SELECT * FROM event").fetchall()
     status = cursor.execute("SELECT * FROM status").fetchall()
+    code_obj= cursor.execute("SELECT code FROM object").fetchall()
     stat={}
     for i in status:
         stat[str(i[0])]=i[1]
     source = cursor.execute("SELECT * FROM source_type").fetchall()
     stype={}
+    dat=[]
     for i in source:
         stype[str(i[0])]=i[1]
     for i in obj:
+        dat.append(decodeID(i[0]))
         i[6]=stat[str(i[6])]
         i[4]=stype[str(i[4])]
     cursor.close()
-    return render_template('table_evt.html', posts=obj)
+
+    if request.method == 'POST':
+        code=request.form['code']
+        active_filter='Filters: '
+        if len(code)>0:
+            obj=list(filter(lambda x:code in x,obj))
+            active_filter+=code+' '
+        filtstat = request.form['status']
+        if len(filtstat) > 0:
+            obj = list(filter(lambda x: filtstat in x, obj))
+            active_filter+= filtstat+' '
+        filtsource = request.form['source']
+        if len(filtsource) > 0:
+            obj = list(filter(lambda x: filtsource in x, obj))
+            active_filter += filtsource + ' '
+        start=request.form['start']
+        end=request.form['end']
+        obj2=[]
+        if len(start)>0 and len(end)>0:
+            t1=UTCDateTime(start+'T00:00')
+            t2=UTCDateTime(end+'T00:00')
+            for i in range(len(obj)):
+                if dat[i]>=t1 and dat[i]<=t2:
+                    obj2.append(obj[i])
+            obj=obj2
+            active_filter+=start+' '+end+' '
+        auto=request.form['auto']
+        if len(auto)>0:
+            if auto=='Auto':
+                obj=list(filter(lambda x:True in x,obj))
+            else:
+                obj=list(filter(lambda x:False in x,obj))
+            active_filter+=auto+' '
+        limit = request.form['limit']
+        if len(limit)>0:
+            obj=obj[:int(limit)]
+            active_filter+='limit '+limit
+        return render_template('table_evt.html', posts=obj, obj=code_obj,status=status,sources=source,filter=active_filter)
+    return render_template('table_evt.html', posts=obj,obj=code_obj,status=status,sources=source,filter=active_filter)
 
 @app.route('/station')
 def station():
@@ -185,11 +225,6 @@ def channel_edit():
                 lc.append(i[1])
             lc=list(set(lc))
             return render_template('edit_chan.html', posts=obj, lc=lc, ch=ch)
-
-        #locid=request.form['loc']
-        #channel=request.form['chan']
-        #redirect(url_for('index'))
-        #return redirect(url_for('edit_chan_all', code=code,locid=locid,channel=channel))
     return render_template('edit_chan.html',posts=obj,lc=lc,ch=ch)
 
 @app.route('/edit_chan_all/<code>/<locid>/<channel>',methods=('GET','POST'))
@@ -238,5 +273,55 @@ def get_db_connect():
 
 
 
+def CreatID(dat,code):
+    #новая система счисления
+    abc=[0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    num_elem=len(abc)
 
+    #формирование id
+    year=dat.year
+    day=dat.julday
+    time=dat.strftime("%H%M%S")
+
+    id10=str(day)+time
+    id10=int(id10)
+    newid=[]
+    while id10>=num_elem:
+        indx=id10%num_elem
+        newid.append(indx)
+        id10=id10//num_elem
+
+    if id10!=0:
+        newid.append(id10)
+
+    newid.reverse()
+    id=code+str(year)+'-'
+
+    for i in newid:
+        id+=str(abc[i])
+
+    return id
+
+def decodeID(evtid):
+    abc = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+           'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+    num_elem = len(abc)
+    s=evtid.split('-')
+    year=s[0]
+    year=int(year[len(year)-4:])
+    id=s[1]
+    n=len(id)-1
+    sum=0
+    for i in id:
+        indx=abc.index(i)
+        sum+=indx*num_elem**n
+        n-=1
+    sum=str(sum)
+    jul=(sum[:3])
+    h=(sum[3:5])
+    m=(sum[5:7])
+    sec=sum[7:9]
+    res=str(year)+'-'+jul+'T'+h+':'+m+':'+sec
+    dat=UTCDateTime(res)
+    return dat
 
