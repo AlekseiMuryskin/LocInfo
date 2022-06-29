@@ -6,7 +6,11 @@ app=Flask(__name__)
 if __name__ == '__main__':
     app.run(debug=True)
 
+"""
+Веб-сервер для работы с БД Location3
+"""
 
+#рендер главной страницы
 @app.route('/')
 def index():
     cursor=get_db_connect()
@@ -14,6 +18,7 @@ def index():
     cursor.close()
     return render_template('index.html', posts=obj)
 
+#рендер страницы Object
 @app.route('/object')
 def object():
     cursor = get_db_connect()
@@ -24,6 +29,7 @@ def object():
         i[4]=f'{i[4]:.2f}'
     return render_template('table_obj.html', posts=obj)
 
+#рендер страницы Event. ПОСТ-запрос позволяет проводить фильтрацию табличных данных, которые видит пользователь
 @app.route('/evt',methods=('GET','POST'))
 def event():
     active_filter=''
@@ -84,6 +90,7 @@ def event():
         return render_template('table_evt.html', posts=obj, obj=code_obj,status=status,sources=source,filter=active_filter)
     return render_template('table_evt.html', posts=obj,obj=code_obj,status=status,sources=source,filter=active_filter)
 
+#рендер страницы Station
 @app.route('/station')
 def station():
     cursor = get_db_connect()
@@ -95,6 +102,7 @@ def station():
         i[3] = f'{i[3]:.2f}'
     return render_template('table_sta.html', posts=obj)
 
+#страница создания нового объекта
 @app.route('/create_obj',methods=('GET','POST'))
 def createObj():
     if request.method == 'POST':
@@ -116,7 +124,7 @@ def createObj():
             return redirect(url_for('index'))
     return render_template('create_obj.html', code=code)
 
-
+#страница редактирования параметров уже существующего объекта с динамической маршрутизацией
 @app.route('/edit_obj_all/<code>',methods=('GET','POST'))
 def edit_obj_all(code):
     cursor = get_db_connect()
@@ -136,6 +144,7 @@ def edit_obj_all(code):
         return redirect(url_for('index'))
     return render_template('edit_obj_all.html',posts=obj[0])
 
+#страница выбора объекта для редактирования
 @app.route('/edit_obj',methods=('GET','POST'))
 def editObj():
     cursor = get_db_connect()
@@ -150,6 +159,7 @@ def editObj():
         return redirect(url_for('edit_obj_all',code=code))
     return render_template('edit_obj.html',posts=obj)
 
+#страница удаления объекта
 @app.route('/delete_obj',methods=('GET','POST'))
 def deleteObj():
     cursor = get_db_connect()
@@ -168,7 +178,7 @@ def deleteObj():
             return redirect(url_for('index'))
     return render_template('delete_obj.html',names=names)
 
-
+#страница редактирования станции
 @app.route('/edit_sta',methods=('GET','POST'))
 def editSta():
     cursor = get_db_connect()
@@ -183,6 +193,7 @@ def editSta():
         return redirect(url_for('edit_sta_all',code=code))
     return render_template('edit_sta.html',posts=obj)
 
+#редактирование параметров выбранной станции
 @app.route('/edit_sta_all/<code>',methods=('GET','POST'))
 def edit_sta_all(code):
     cursor = get_db_connect()
@@ -202,6 +213,7 @@ def edit_sta_all(code):
         return redirect(url_for('index'))
     return render_template('edit_sta_all.html',posts=obj[0])
 
+#выбор канала для редактирования
 @app.route('/edit_chan',methods=('GET','POST'))
 def channel_edit():
     cursor = get_db_connect()
@@ -227,6 +239,7 @@ def channel_edit():
             return render_template('edit_chan.html', posts=obj, lc=lc, ch=ch)
     return render_template('edit_chan.html',posts=obj,lc=lc,ch=ch)
 
+#редактирование параметров выбранного канала
 @app.route('/edit_chan_all/<code>/<locid>/<channel>',methods=('GET','POST'))
 def edit_chan_all(code,locid,channel):
     cursor = get_db_connect()
@@ -257,10 +270,10 @@ def edit_chan_all(code,locid,channel):
         return redirect(url_for('index'))
     return render_template('edit_chan_all.html',posts=obj[0])
 
-
+#подклюбчение к БД
 def get_db_connect():
-    #db = 'D:\git\FlaskStep\loc_db_v3.accdb'
-    db = 'E:\git\LocInfo\loc_db_v3.accdb'
+    db = 'D:\git\FlaskStep\loc_db_v3.accdb'
+    #db = 'E:\git\LocInfo\loc_db_v3.accdb'
     try:
         con_str = f'DBQ={db};'
         con_string = r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};' + con_str
@@ -272,7 +285,7 @@ def get_db_connect():
     return cursor
 
 
-
+#создание уникального ID для сейсмических событий
 def CreatID(dat,code):
     #новая система счисления
     abc=[0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
@@ -302,6 +315,7 @@ def CreatID(dat,code):
 
     return id
 
+#декодирование Event ID обратно в дату
 def decodeID(evtid):
     abc = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
            'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
